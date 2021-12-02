@@ -104,8 +104,8 @@ async def youtube_dl_call_back(bot, update):
     )
     description = Translation.CUSTOM_CAPTION_UL_FILE
     if "fulltitle" in response_json:
-        description = response_json["fulltitle"][0:1021]
-        # escape Markdown and special characters
+        description = response_json["fulltitle"][:1021]
+            # escape Markdown and special characters
     tmp_directory_for_each_user = Config.DOWNLOAD_LOCATION + "/" + str(update.from_user.id)
     if not os.path.isdir(tmp_directory_for_each_user):
         os.makedirs(tmp_directory_for_each_user)
@@ -212,16 +212,13 @@ async def youtube_dl_call_back(bot, update):
             duration = 0
             if tg_send_type != "file":
                 metadata = extractMetadata(createParser(download_directory))
-                if metadata is not None:
-                    if metadata.has("duration"):
-                        duration = metadata.get('duration').seconds
+                if metadata is not None and metadata.has("duration"):
+                    duration = metadata.get('duration').seconds
             # get the correct width, height, and duration for videos greater than 10MB
             if os.path.exists(thumb_image_path):
-                width = 0
                 height = 0
                 metadata = extractMetadata(createParser(thumb_image_path))
-                if metadata.has("width"):
-                    width = metadata.get("width")
+                width = metadata.get("width") if metadata.has("width") else 0
                 if metadata.has("height"):
                     height = metadata.get("height")
                 if tg_send_type == "vm":
@@ -239,8 +236,8 @@ async def youtube_dl_call_back(bot, update):
                 else:
                     img.resize((90, height))
                 img.save(thumb_image_path, "JPEG")
-                # https://pillow.readthedocs.io/en/3.1.x/reference/Image.html#create-thumbnails
-                
+                            # https://pillow.readthedocs.io/en/3.1.x/reference/Image.html#create-thumbnails
+
             else:
                 thumb_image_path = None
             start_time = time.time()
@@ -342,7 +339,7 @@ async def youtube_dl_call_back(bot, update):
                                     media=image
                                 )
                             )
-                        i = i + 1
+                        i += 1
             await bot.send_media_group(
                 chat_id=update.message.chat.id,
                 disable_notification=True,

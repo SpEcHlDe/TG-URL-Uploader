@@ -89,7 +89,7 @@ async def button(bot, update):
                         start_time
                     )
                 )
-                i = i + 1
+                i += 1
                 os.remove(current_file_name)
             try:
                 shutil.rmtree(extract_dir_path)
